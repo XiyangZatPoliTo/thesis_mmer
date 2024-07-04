@@ -1,5 +1,5 @@
 # model,模型主要部分都在这个文件，类型为class
-# EmoCatcher: Convoltuional Attention based Bi-directional GRU
+# AudioEmoReco: Convoltuional Attention based Bi-directional GRU
 import torch
 import torch.nn as nn
 import torch.nn.functional as F

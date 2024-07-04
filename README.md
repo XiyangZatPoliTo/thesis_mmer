@@ -31,7 +31,8 @@
 - Same model structure as audio modality part will be used for the first attempt.
 
 ## Fusion mechanism
-There are three main fusion mechanism in the related works.
+There are three main fusion mechanisms in the related works.
+
 This work will firstly try late fusion, which is commonly used by researchers.
 
 
