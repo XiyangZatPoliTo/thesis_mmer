@@ -26,9 +26,9 @@
 
 ### Ongoing
 
-- `Facenet` will be used to face detection in preprocessing stage.
-- `EfficientFace`(pre-trained) model will be used as visual weight initialization. 
-- Same model structure as audio modality part will be used for the first attempt.
+1. [x] `Facenet` will be used to face detection in preprocessing stage. 
+2. [ ] `EfficientFace`(pre-trained) model will be used as visual weight initialization.
+3. [ ] Same model structure as audio modality part will be used for the first attempt.
 
 ## Fusion mechanism
 There are three main fusion mechanisms in the related works.
