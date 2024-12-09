@@ -140,7 +140,7 @@ class AudioEmoRec(nn.Module):
         o_pad, L_pad = nn.utils.rnn.pad_packed_sequence(o, batch_first=True, padding_value=0.)
 
         # attention 
-        h_c = torch.concat((h[0], h[1]), axis=-1).unsqueeze(1)
+        h_c = torch.concat(tensors=(h[0], h[1]), axis=-1).unsqueeze(1)
         o_att, att_weights = self.attention(query=h_c, key=o_pad, value=o_pad, lengths=L_pad)
         o_att = o_att.squeeze(1)
 

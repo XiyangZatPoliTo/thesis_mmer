@@ -106,5 +106,5 @@ def sig2batch(batch, mel_specs_kwargs=None):
 
 
 if __name__ == "__main__":
-    # 需要在env.py里同时将数据集地址换掉
+    # 初始化时需要在env.py里同时将数据集地址换掉
     meta = get_meta('F:/RAVDESS_original/Audio_Speech_Actors_01-24')

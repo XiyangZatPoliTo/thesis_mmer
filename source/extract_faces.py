@@ -1,5 +1,7 @@
 # -*- coding: utf-8 -*-
 # opencv partly need torch==2.3.1
+# this file is working on face extraction from videos
+# and the idea was coming from https://github.com/katerynaCh/multimodal-emotion-recognition
 import glob
 import os
 import numpy as np
@@ -7,6 +9,8 @@ import cv2
 from tqdm import tqdm
 import torch
 from facenet_pytorch import MTCNN
+from timeit import default_timer as timer
+from print_time import print_train_time
 
 root = 'F:/RAVDESS_original'
 device = torch.device('cuda') if torch.cuda.is_available() else 'cpu'
@@ -24,6 +28,9 @@ failed_videos = []
 
 select_distributed = lambda m, n: [i * n // m + n // (2 * m) for i in range(m)]
 n_processed = 0
+
+# measure time beginning
+train_time_start_extract_faces = timer()
 
 for sess in tqdm(sorted(filter(
         lambda x: x.startswith('Video') and os.path.isdir(os.path.join(root, x)), os.listdir(root)))):
@@ -109,3 +116,9 @@ for sess in tqdm(sorted(filter(
     with open('processed.txt', 'a') as f:
         f.write(sess + '\n')
     print(failed_videos)
+
+# measure time end
+train_time_end_extract_faces = timer()
+total_train_time_model_2 = print_train_time(start=train_time_start_extract_faces,
+                                            end=train_time_end_extract_faces,
+                                            device=device)

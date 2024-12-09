@@ -73,6 +73,7 @@ for k, (tr, ts) in enumerate(splitted_meta):
     MODEL_SAVE_DIR = os.path.join(config.out_dir, f'model/fold{k + 1}/' if config.kfcv else 'model/')
     LOG_OUT_DIR = os.path.join(config.out_dir, 'logs/')
     LOG_FILENAME = os.path.join(LOG_OUT_DIR, f'fold{k + 1}_{config.log}' if config.kfcv else config.log)
+    # noinspection PyPackageRequirements
     N_EPOCHS = config.n_epochs
     create_folder(config.out_dir)
     create_folder(MODEL_SAVE_DIR)
