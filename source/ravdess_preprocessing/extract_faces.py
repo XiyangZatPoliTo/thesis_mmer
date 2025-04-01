@@ -2,15 +2,20 @@
 # opencv partly need torch==2.3.1
 # this file is working on face extraction from videos
 # and the idea was coming from https://github.com/katerynaCh/multimodal-emotion-recognition
+# 已经通过测试，这个文件可以算作video的preprocessing部分
+# 主要用于先把.mp4转换成.avi文件，然后再得到.npy文件，方便后续做video_dataloader
+
 import glob
 import os
-import numpy as np
+from timeit import default_timer as timer
+
 import cv2
-from tqdm import tqdm
+import numpy as np
 import torch
 from facenet_pytorch import MTCNN
-from timeit import default_timer as timer
+from source import print_time
 from print_time import print_train_time
+from tqdm import tqdm
 
 root = 'F:/RAVDESS_original'
 device = torch.device('cuda') if torch.cuda.is_available() else 'cpu'
@@ -34,7 +39,7 @@ train_time_start_extract_faces = timer()
 
 for sess in tqdm(sorted(filter(
         lambda x: x.startswith('Video') and os.path.isdir(os.path.join(root, x)), os.listdir(root)))):
-    # actor_dir ~= F:/RAVDESS_original\Video_Speech_Actor_01\Actor_01
+    # actor_dir ~= F:/RAVDESS_original/Video_Speech_Actor_01/Actor_01
     actor_dir = os.path.join(root, sess)
     for filename in glob.glob(os.path.join(actor_dir, '*/*.mp4')):
         print(filename)
@@ -60,7 +65,7 @@ for sess in tqdm(sorted(filter(
         if save_avi:
             # due to the version update of cv2, cv2.VideoWriter_fourcc has been rewritten to
             # a sub-function of cv2.VideoWriter
-            out = cv2.VideoWriter(os.path.join(root, sess, actor_dir, filename[:-4] + '_facecroppad.avi'),
+            out = cv2.VideoWriter(os.path.join(root, sess, actor_dir, filename[:-4] + '_facecropped.avi'),
                                   cv2.VideoWriter.fourcc('M', 'J', 'P', 'G'), save_fps, (224, 224))
 
         numpy_video = []
@@ -113,7 +118,7 @@ for sess in tqdm(sorted(filter(
             print('Error', sess, filename)
 
     n_processed += 1
-    with open('processed.txt', 'a') as f:
+    with open('../processed.txt', 'a') as f:
         f.write(sess + '\n')
     print(failed_videos)
 

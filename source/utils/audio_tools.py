@@ -30,6 +30,9 @@ def vad(spec, plot=False):
 
 
 def gvad(spec, plot=False, n_spare=3):
+    """
+    a custom implementation for detecting Voice Activity Detection (VAD) points in a spectrogram (spec).
+    """
     time_mag = minmax(librosa.amplitude_to_db(spec)).sum(axis=0)
     sorted_time_mag = np.sort(time_mag)
     sorted_time_mag_smoothed = gaussian_filter1d(sorted_time_mag, sigma=10)

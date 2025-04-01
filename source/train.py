@@ -9,9 +9,9 @@ from trainer import train, evaluate
 from adabelief_pytorch import AdaBelief
 from utils.env import create_config, save_model, create_folder
 from utils.criterion import LabelSmoothingLoss
-from model import AudioEmoRec
+from audio_model import AudioEmoRec
 from dataset import RAVDESSMelS
-from dataloader import get_meta, split_meta, mels2batch
+from audio_dataloader import get_audio_meta, split_meta, mels2batch
 import pickle
 import matplotlib.pyplot as plt
 import os
@@ -25,7 +25,7 @@ print("here is the checkpoint 1")
 print("train model on {}".format(device))
 
 # Extract meta information from .wav file name
-meta = get_meta(config.dataset_dir)
+meta = get_audio_meta(config.dataset_dir)
 print(meta.head(3))
 print("here is the checkpoint 2")
 # Mel spectrogram parameters

@@ -1,4 +1,5 @@
 # dataset处理
+# 主要作用：将音频文件转换为mels并存储在tensor中，方便后续模型输入
 
 import torch
 import torch.nn as nn
@@ -11,7 +12,12 @@ import numpy as np
 
 
 class RAVDESSMelS(Dataset):
-    def __init__(self, dataset_dir, mel_specs_kwargs={}, speech_list=None, out_dir=None):
+    """
+    override the RAVDESS dataset and make it suitable for the mel spectrogram process
+    """
+    def __init__(self, dataset_dir, mel_specs_kwargs=None, speech_list=None, out_dir=None):
+        if mel_specs_kwargs is None:
+            mel_specs_kwargs = {}
         self.dataset_dir = dataset_dir
         self.mel_specs_kwargs = mel_specs_kwargs
         self.out_dir = out_dir
@@ -37,10 +43,14 @@ class RAVDESSMelS(Dataset):
 
 
 def truncate_melspecs(sig, return_va_point=False, sr=22050, mel_specs_kwargs=None):
+    """
+    Convert the spectrogram to an amplitude map
+    and intercept the main part with the gvad function
+    """
     if mel_specs_kwargs is None:
         mel_specs_kwargs = {}
     mel_spec = librosa.power_to_db(librosa.feature.melspectrogram(y=sig, sr=sr, **mel_specs_kwargs))
-    va_point = gvad(librosa.db_to_amplitude(mel_spec) ** 2)
+    va_point = gvad(librosa.db_to_amplitude(mel_spec) ** 2)  # 将db谱图转为普通振幅谱图
     mel_spec = mel_spec[:, va_point[0]:va_point[1]]
     if return_va_point:
         return mel_spec, va_point

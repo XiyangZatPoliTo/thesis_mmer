@@ -1,5 +1,6 @@
 # model,模型主要部分都在这个文件，类型为class
 # AudioEmoReco: Convoltuional Attention based Bi-directional GRU
+
 import torch
 import torch.nn as nn
 import torch.nn.functional as F
@@ -14,6 +15,9 @@ def get_mask_ind(x, input_lengths):
 
 
 class BahdanauAttention(nn.Module):
+    """
+    实现Bahdanau注意力机制，用于计算输入序列中各部分的重要性，并加权计算输出。
+    """
     def __init__(self, hidden_dim):
         super(BahdanauAttention, self).__init__()
         self.linear_q = nn.Linear(hidden_dim, hidden_dim)
@@ -33,6 +37,9 @@ class BahdanauAttention(nn.Module):
 
 
 class ConvLN(nn.Module):
+    """
+    包含卷积和层归一化的模块，用于对输入进行标准化处理。
+    """
     def __init__(self, n_feats):
         super(ConvLN, self).__init__()
         self.layer_norm = nn.LayerNorm(n_feats)
@@ -44,6 +51,9 @@ class ConvLN(nn.Module):
 
 
 class Conv1dLNBlock(nn.Module):
+    """
+    组合卷积、层归一化、激活和丢弃操作，构建卷积神经网络中的block。
+    """
     def __init__(self, in_channels, out_channels, kernel_size, p=0.2, **conv_kwargs):
         super(Conv1dLNBlock, self).__init__()
         self.conv_block = nn.Sequential(
@@ -59,6 +69,9 @@ class Conv1dLNBlock(nn.Module):
 
 
 class AudioEmoRec(nn.Module):
+    """
+    最终的音频情感识别模型，结合了卷积层、GRU层和注意力机制，对音频数据进行特征提取、序列建模，并进行情感分类。
+    """
     def __init__(self, input_dim, hidden_dim, kernel_size, num_classes=8):
         super(AudioEmoRec, self).__init__()
         self.num_classes = num_classes

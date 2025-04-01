@@ -10,7 +10,7 @@ import os
 from utils.audio_tools import gvad
 
 
-def get_meta(dataset_dir):
+def get_audio_meta(dataset_dir):
     """
     获取原始音频集，并将文件名中的features进行分割，最后返回一个DataFrame，内容为数据集中每个文件的features
     """
@@ -22,7 +22,7 @@ def get_meta(dataset_dir):
     meta_info = pd.DataFrame(columns=features)
     for fpath in speech_list:
         # 分离路径名，并保留.wav的filename，without file extension
-        fn = fpath.split("/")[-1].split(".")[0]
+        fn = fpath.split("\\")[-1].split(".")[0]
         # 创建一个字典，将文件名中的各部分与features对应起来
         speech_info = {f: [c] for c, f in zip(fn.split("-"), features)}
         # 将当前的元数据存进meta_info
@@ -107,4 +107,4 @@ def sig2batch(batch, mel_specs_kwargs=None):
 
 if __name__ == "__main__":
     # 初始化时需要在env.py里同时将数据集地址换掉
-    meta = get_meta('F:/RAVDESS_original/Audio_Speech_Actors_01-24')
+    meta = get_audio_meta('F:/RAVDESS_original/Audio_Speech_Actors_01-24')
