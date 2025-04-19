@@ -16,8 +16,11 @@ from facenet_pytorch import MTCNN
 from source import print_time
 from print_time import print_train_time
 from tqdm import tqdm
+from utils.env import create_config
 
-root = 'F:/RAVDESS_original'
+# 使用config，增强代码的可移植性
+config = create_config()
+root = config.dataset_dir
 device = torch.device('cuda') if torch.cuda.is_available() else 'cpu'
 
 mtcnn = MTCNN(image_size=(720, 1280), device=device)
@@ -113,7 +116,7 @@ for sess in tqdm(sorted(filter(
                 numpy_video.append(np.zeros((224, 224, 3), dtype=np.uint8))
         if save_avi:
             out.release()
-        np.save(os.path.join(root, sess, actor_dir, filename[:-4] + '_facecroppad.npy'), np.array(numpy_video))
+        np.save(os.path.join(root, sess, actor_dir, filename[:-4] + '_facecropped.npy'), np.array(numpy_video))
         if len(numpy_video) != 15:
             print('Error', sess, filename)
 
