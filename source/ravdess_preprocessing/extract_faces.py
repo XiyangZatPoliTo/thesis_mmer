@@ -13,8 +13,7 @@ import cv2
 import numpy as np
 import torch
 from facenet_pytorch import MTCNN
-from source import print_time
-from print_time import print_train_time
+from utils.print_time import print_train_time
 from tqdm import tqdm
 from utils.env import create_config
 

@@ -3,8 +3,8 @@ import glob
 import numpy as np
 import pandas as pd
 import torch
-from torch.utils.data import Dataset, DataLoader
-from print_time import print_checkpoint_message
+from torch.utils.data import Dataset
+from utils.print_time import print_checkpoint_message
 
 def get_video_meta(dataset_dir):
     """

@@ -9,11 +9,10 @@ from trainer import train, evaluate
 from adabelief_pytorch import AdaBelief
 from utils.env import create_config, save_model, create_folder
 from utils.criterion import LabelSmoothingLoss
-from audio_model import AudioEmoRec
-from dataset import RAVDESSMelS
+from models.audio_model import AudioEmoRec
+from dataset.dataset import RAVDESSMelS
 from audio_dataloader import get_audio_meta, split_meta, mels2batch
 import pickle
-import matplotlib.pyplot as plt
 import os
 import warnings
 

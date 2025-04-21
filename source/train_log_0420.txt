@@ -1,0 +1,32 @@
+🚀 开始训练...
+📘 Epoch 1/30 | Train Acc: 0.1953 | Val Acc: 0.2986
+📘 Epoch 2/30 | Train Acc: 0.3524 | Val Acc: 0.3854
+📘 Epoch 3/30 | Train Acc: 0.4540 | Val Acc: 0.4896
+📘 Epoch 4/30 | Train Acc: 0.5564 | Val Acc: 0.5417
+📘 Epoch 5/30 | Train Acc: 0.6814 | Val Acc: 0.5347
+📘 Epoch 6/30 | Train Acc: 0.7769 | Val Acc: 0.5799
+📘 Epoch 7/30 | Train Acc: 0.8359 | Val Acc: 0.6250
+📘 Epoch 8/30 | Train Acc: 0.9210 | Val Acc: 0.6389
+📘 Epoch 9/30 | Train Acc: 0.9670 | Val Acc: 0.6250
+📘 Epoch 10/30 | Train Acc: 0.9766 | Val Acc: 0.6389
+📘 Epoch 11/30 | Train Acc: 0.9931 | Val Acc: 0.6389
+📘 Epoch 12/30 | Train Acc: 0.9852 | Val Acc: 0.6007
+📘 Epoch 13/30 | Train Acc: 0.9748 | Val Acc: 0.6042
+📘 Epoch 14/30 | Train Acc: 0.9852 | Val Acc: 0.6250
+📘 Epoch 15/30 | Train Acc: 0.9957 | Val Acc: 0.6007
+📘 Epoch 16/30 | Train Acc: 0.9965 | Val Acc: 0.6250
+📘 Epoch 17/30 | Train Acc: 0.9991 | Val Acc: 0.6319
+📘 Epoch 18/30 | Train Acc: 1.0000 | Val Acc: 0.6389
+📘 Epoch 19/30 | Train Acc: 0.9835 | Val Acc: 0.5764
+📘 Epoch 20/30 | Train Acc: 0.9679 | Val Acc: 0.6076
+📘 Epoch 21/30 | Train Acc: 0.9887 | Val Acc: 0.5729
+📘 Epoch 22/30 | Train Acc: 0.9974 | Val Acc: 0.5729
+📘 Epoch 23/30 | Train Acc: 0.9931 | Val Acc: 0.5799
+📘 Epoch 24/30 | Train Acc: 0.9974 | Val Acc: 0.6215
+📘 Epoch 25/30 | Train Acc: 0.9974 | Val Acc: 0.5972
+📘 Epoch 26/30 | Train Acc: 1.0000 | Val Acc: 0.5938
+📘 Epoch 27/30 | Train Acc: 1.0000 | Val Acc: 0.6007
+📘 Epoch 28/30 | Train Acc: 1.0000 | Val Acc: 0.6042
+📘 Epoch 29/30 | Train Acc: 0.9957 | Val Acc: 0.5972
+📘 Epoch 30/30 | Train Acc: 0.9774 | Val Acc: 0.5417
+✅ 模型训练完毕，已保存为 multimodal_model.pt
