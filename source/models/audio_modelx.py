@@ -6,7 +6,7 @@ import torch.nn.functional as F
 
 # 原版 EmoCatcher 分类模型：用于单模态情绪分类
 class AudioClassifier(nn.Module):
-    def __init__(self, num_classes=8):
+    def __init__(self, num_classes=8, dropout=0.3):
         super(AudioClassifier, self).__init__()
         self.conv = nn.Sequential(
             nn.Conv2d(1, 16, kernel_size=5, stride=2, padding=2),
@@ -25,6 +25,7 @@ class AudioClassifier(nn.Module):
             nn.Flatten(),
             nn.Linear(64 * 16 * 16, 512),
             nn.ReLU(),
+            nn.Dropout(dropout),
             nn.Linear(512, num_classes)
         )
 
@@ -36,7 +37,7 @@ class AudioClassifier(nn.Module):
 
 # 多模态融合使用：输出音频嵌入特征而不是直接分类
 class AudioEmbedding(nn.Module):
-    def __init__(self, embedding_dim=256):
+    def __init__(self, embedding_dim=256, dropout=0.3):
         super(AudioEmbedding, self).__init__()
         self.conv = nn.Sequential(
             nn.Conv2d(1, 16, kernel_size=5, stride=2, padding=2),
@@ -55,6 +56,7 @@ class AudioEmbedding(nn.Module):
             nn.Flatten(),
             nn.Linear(64 * 16 * 16, 512),
             nn.ReLU(),
+            nn.Dropout(dropout),
             nn.Linear(512, embedding_dim)
         )
 

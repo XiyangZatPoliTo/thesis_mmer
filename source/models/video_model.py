@@ -1,13 +1,17 @@
 import torch
 import torch.nn as nn
 import torchvision.models as models
+# from torchvision.models import ResNet18_Weights, resnet18
+
 
 class VideoModel(nn.Module):
-    def __init__(self, hidden_dim=256, lstm_layers=1, bidirectional=True, freeze_backbone=True):
+    def __init__(self, hidden_dim=256, lstm_layers=1,
+                 bidirectional=True, freeze_backbone=True, dropout=0.3):
         super(VideoModel, self).__init__()
 
         # Load pre-trained ResNet18
         resnet = models.resnet18(pretrained=True)
+        # resnet = resnet18(weights=ResNet18_Weights.DEFAULT)
         modules = list(resnet.children())[:-1]  # remove the final FC layer
         self.backbone = nn.Sequential(*modules)  # output: [B, 512, 1, 1]
 
@@ -28,6 +32,7 @@ class VideoModel(nn.Module):
         )
 
         self.out_dim = hidden_dim * 2 if bidirectional else hidden_dim
+        self.dropout = nn.Dropout(dropout)
 
     def forward(self, x):
         """
@@ -44,5 +49,6 @@ class VideoModel(nn.Module):
         # Temporal modeling
         lstm_out, _ = self.lstm(feats)    # [B, T, H]
         video_embedding = lstm_out[:, -1, :]  # Use last step (or mean over T)
+        video_embedding = self.dropout(video_embedding)
 
         return video_embedding

@@ -1,4 +1,4 @@
-
+from datetime import datetime
 import os
 import torch
 import torch.nn as nn
@@ -26,7 +26,8 @@ config = {
     "audio_dim": 256,
     "video_dim": 512,
     "num_classes": 8,
-    "device": "cuda" if torch.cuda.is_available() else "cpu"
+    "device": "cuda" if torch.cuda.is_available() else "cpu",
+    "dropout": 0.3
 }
 
 # === 加载数据集并划分训练/验证 ===
@@ -43,9 +44,9 @@ train_loader = DataLoader(train_dataset, batch_size=config["batch_size"], shuffl
 val_loader = DataLoader(val_dataset, batch_size=config["batch_size"], shuffle=False)
 
 # === 构建模型 ===
-audio_model = get_audio_model(mode="embedding", embedding_dim=config["audio_dim"])
-video_model = VideoModel(hidden_dim=config["video_dim"] // 2)
-fusion_model = FusionModel(config["audio_dim"], config["video_dim"], config["num_classes"])
+audio_model = get_audio_model(mode="embedding", embedding_dim=config["audio_dim"], dropout=config["dropout"])
+video_model = VideoModel(hidden_dim=config["video_dim"] // 2, dropout=config["dropout"])
+fusion_model = FusionModel(config["audio_dim"], config["video_dim"], config["num_classes"], dropout=config["dropout"])
 audio_model.to(config["device"])
 video_model.to(config["device"])
 fusion_model.to(config["device"])
@@ -60,6 +61,7 @@ train_losses, val_losses = [], []
 train_accuracies, val_accuracies = [], []
 
 print("🚀 开始训练...")
+whole_train_start = timer()
 
 for epoch in range(config["epochs"]):
     train_time_start = timer()
@@ -125,13 +127,19 @@ for epoch in range(config["epochs"]):
     print(f"📘 Epoch {epoch+1}/{config['epochs']} | Train Acc: {train_acc:.4f} | Val Acc: {val_acc:.4f}")
     train_time_end = timer()
     total_train_time = print_train_time(train_time_start, train_time_end)
+
+whole_train_end = timer()
+print("---------train end----------")
+print_train_time(whole_train_start, whole_train_end)
 # === 保存模型 ===
+time_tag = datetime.now().strftime("%m%d_%H")
+model_filename = f"multimodal_model_{time_tag}.pt"
 torch.save({
     "audio_model": audio_model.state_dict(),
     "video_model": video_model.state_dict(),
     "fusion_model": fusion_model.state_dict()
-}, "multimodal_model_0419_1.pt")
-print("✅ 模型训练完毕，已保存为 multimodal_model_0419_1.pt")
+}, model_filename)
+print(f"✅ 模型训练完毕，已保存为 {model_filename}")
 
 # === 绘制训练曲线 ===
 plt.figure(figsize=(10, 4))

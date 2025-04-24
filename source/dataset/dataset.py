@@ -15,7 +15,7 @@ from utils.audio_tools import gvad
 import numpy as np
 import os
 from collections import defaultdict
-
+from utils.audio_augmentor import AudioAugmentor
 
 class RAVDESSMelS(Dataset):
     """
@@ -84,16 +84,20 @@ class RAVDESSMultimodalDataset(Dataset):
     多模态数据集：从 .wav 提取 Mel 频谱图，同时加载已预处理好的人脸帧（.npy）
     你的视频预处理脚本应已生成了 _facecropped.npy 文件（每条样本约 15 帧）
     """
-    def __init__(self, dataset_dir, mel_specs_kwargs=None, frames=15, transform=None, verbose=True, debug=False):
+    # 使用cuda之后，显存不够，将视频frames降低：15->8
+    def __init__(self, dataset_dir, mel_specs_kwargs=None, frames=8,
+                 transform=None, verbose=True, debug=False, apply_augment=False):
         self.dataset_dir = dataset_dir
         self.mel_specs_kwargs = mel_specs_kwargs if mel_specs_kwargs else {}
         self.frames = frames
         self.transform = transform
         self.verbose = verbose  # 增加一个开关，打印缺失文件
         self.debug = debug
+        self.apply_augment = apply_augment
+        self.augmentor = AudioAugmentor() if apply_augment else None
 
         # RAVDESS 标签映射表（情绪编号 → label）
-        self.label_map = {k: int(k) for k in emotion_dict.keys()}  # 01 -> 1, ..., 08 -> 8
+        # self.label_map = {k: int(k) for k in emotion_dict.keys()}  # 01 -> 1, ..., 08 -> 8
 
         # 获取所有 .wav 文件路径（音频主控）
         self.wav_paths = []
@@ -109,7 +113,7 @@ class RAVDESSMultimodalDataset(Dataset):
         wav_path = self.wav_paths[idx]
         base_name = os.path.splitext(os.path.basename(wav_path))[0]
         label_id = base_name.split("-")[2]
-        label = torch.tensor(self.label_map[label_id], dtype=torch.long)
+        # label = torch.tensor(self.label_map[label_id], dtype=torch.long)
         label_name = emotion_dict[label_id]
 
         # === 音频特征提取（audio-only） ===
@@ -120,6 +124,10 @@ class RAVDESSMultimodalDataset(Dataset):
             )
             va = gvad(librosa.db_to_amplitude(mel_spec) ** 2)
             mel_spec = mel_spec[:, va[0]:va[1]]
+            # 对音频数据进行增强
+            mel_spec = torch.tensor(mel_spec, dtype=torch.float32)
+            if self.apply_augment and self.augmentor is not None:
+                mel_spec = self.augmentor(mel_spec)
 
             max_len = 128  # 统一时间长度，后续可搭配self.n_mels和self.max_len变为可调整的参数
             if mel_spec.shape[1] > max_len:
