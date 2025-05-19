@@ -27,7 +27,9 @@ class AttentionFusion(nn.Module):
 
     def forward(self, audio_feat, video_feat):
         audio_proj = self.audio_fc(audio_feat)
+        # print("audio_feat shape:", audio_feat.shape)
         video_proj = self.video_fc(video_feat)
+        # print("video_feat shape:", video_feat.shape)
         concat = torch.cat([audio_proj, video_proj], dim=1)
         attn_weights = self.attention(concat)
         fused = attn_weights[:, 0].unsqueeze(1) * audio_proj + attn_weights[:, 1].unsqueeze(1) * video_proj

@@ -12,23 +12,24 @@ from utils.train_utils import AverageMeter, EarlyStopping, save_training_logs, p
 os.environ["KMP_DUPLICATE_LIB_OK"] = "TRUE"
 
 # ===== 配置 =====
+# RTX3060
 config = {
-    "dataset_dir": "F:/RAVDESS_dataset/Audio&Video_Speech_Actors_01-24/",
+    "dataset_dir": "D:/RAVDESS_dataset/Audio&Video_Speech_Actors_01-24/",
     "n_mels": 128,
     "n_fft": 2048,
     "hop_length": 512,
     "frames": 15,
-    "batch_size": 8,
+    "batch_size": 16,
     "epochs": 30,
     "learning_rate": 1e-4,
-    "weight_decay": 1e-4,
+    "weight_decay": 1e-5,
     "patience": 6,
     "dropout": 0.3,
     "num_classes": 8,
     "embedding_dim": 256,
     "video_hidden_dim": 256,
     "use_lstm": True,
-    "grad_accum_steps": 2,
+    "grad_accum_steps": 1,
     "device": "cuda" if torch.cuda.is_available() else "cpu",
 }
 

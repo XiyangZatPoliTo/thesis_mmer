@@ -3,6 +3,7 @@ import os
 import time
 import matplotlib.pyplot as plt
 import pandas as pd
+import csv
 
 def train_epoch(audio_model, video_model, fusion_model, loader, optimizer, criterion, device, grad_accum=1):
     audio_model.train()
@@ -111,41 +112,86 @@ class AverageMeter:
         self.count += n
         self.avg = self.sum / self.count
 
-def save_training_logs(log_list, prefix="baseline"):
-    """Save training and validation logs to CSV."""
-    os.makedirs("logs", exist_ok=True)
-    df = pd.DataFrame(log_list)
-    timestamp = time.strftime('%m%d_%H%M')
-    save_path = os.path.join("logs", f"{prefix}_train_log_{timestamp}.csv")
-    df.to_csv(save_path, index=False)
-    print(f"✅ 训练日志已保存至: {save_path}")
+# def save_training_logs(log_list, prefix="baseline"):
+#     """Save training and validation logs to CSV."""
+#     os.makedirs("logs", exist_ok=True)
+#     df = pd.DataFrame(log_list)
+#     timestamp = time.strftime('%m%d_%H%M')
+#     save_path = os.path.join("logs", f"{prefix}_train_log_{timestamp}.csv")
+#     df.to_csv(save_path, index=False)
+#     print(f"✅ 训练日志已保存至: {save_path}")
 
-def plot_training_curves(log_list, prefix="baseline"):
-    """Plot and save training loss/accuracy curves."""
-    os.makedirs("plots", exist_ok=True)
-    df = pd.DataFrame(log_list)
+def save_training_logs(train_accs, val_accs, losses, filepath):
+    """
+    保存训练日志为 CSV 文件，包括每轮的训练准确率、验证准确率、训练损失。
+    """
+    with open(filepath, 'w', newline='') as f:
+        writer = csv.writer(f)
+        writer.writerow(["Epoch", "Train Accuracy", "Val Accuracy", "Loss"])
+        for epoch, (train_acc, val_acc, loss) in enumerate(zip(train_accs, val_accs, losses), 1):
+            writer.writerow([epoch, f"{train_acc:.4f}", f"{val_acc:.4f}", f"{loss:.4f}"])
 
-    fig, (ax1, ax2) = plt.subplots(1, 2, figsize=(14, 5))
+# def plot_training_curves(log_list, prefix="baseline"):
+#     """Plot and save training loss/accuracy curves."""
+#     os.makedirs("plots", exist_ok=True)
+#     df = pd.DataFrame(log_list)
+#
+#     fig, (ax1, ax2) = plt.subplots(1, 2, figsize=(14, 5))
+#
+#     # 绘制准确率
+#     ax1.plot(df["epoch"], df["train_acc"], label="Train Acc")
+#     ax1.plot(df["epoch"], df["val_acc"], label="Val Acc")
+#     ax1.set_title("Accuracy Curve")
+#     ax1.set_xlabel("Epoch")
+#     ax1.set_ylabel("Accuracy")
+#     ax1.legend()
+#
+#     # 绘制loss
+#     ax2.plot(df["epoch"], df["train_loss"], label="Train Loss")
+#     ax2.plot(df["epoch"], df["val_loss"], label="Val Loss")
+#     ax2.set_title("Loss Curve")
+#     ax2.set_xlabel("Epoch")
+#     ax2.set_ylabel("Loss")
+#     ax2.legend()
+#
+#     plt.tight_layout()
+#     timestamp = time.strftime('%m%d_%H%M')
+#     save_path = os.path.join("plots", f"{prefix}_training_curves_{timestamp}.png")
+#     fig.savefig(save_path)
+#     print(f"✅ 训练曲线已保存至: {save_path}")
+#     plt.close(fig)
 
-    # 绘制准确率
-    ax1.plot(df["epoch"], df["train_acc"], label="Train Acc")
-    ax1.plot(df["epoch"], df["val_acc"], label="Val Acc")
-    ax1.set_title("Accuracy Curve")
-    ax1.set_xlabel("Epoch")
-    ax1.set_ylabel("Accuracy")
-    ax1.legend()
+def plot_training_curves(train_accs, val_accs, losses, save_path):
+    """
+    绘制训练准确率、验证准确率和损失曲线，并保存为 PNG。
+    """
+    if not (len(train_accs) == len(val_accs) == len(losses)):
+        raise ValueError("Input lists must have the same length.")
 
-    # 绘制loss
-    ax2.plot(df["epoch"], df["train_loss"], label="Train Loss")
-    ax2.plot(df["epoch"], df["val_loss"], label="Val Loss")
-    ax2.set_title("Loss Curve")
-    ax2.set_xlabel("Epoch")
-    ax2.set_ylabel("Loss")
-    ax2.legend()
+    epochs = range(1, len(train_accs) + 1)
+    plt.figure(figsize=(12, 6))
+
+    # Accuracy subplot
+    plt.subplot(1, 2, 1)
+    plt.plot(epochs, train_accs, label='Train Accuracy')
+    plt.plot(epochs, val_accs, label='Val Accuracy')
+    plt.xlabel("Epoch")
+    plt.ylabel("Accuracy")
+    plt.title("Train vs Val Accuracy")
+    plt.ylim(0, 1)
+    plt.grid(True)
+    plt.legend()
+
+    # Loss subplot
+    plt.subplot(1, 2, 2)
+    plt.plot(epochs, losses, label='Training Loss', color='red')
+    plt.xlabel("Epoch")
+    plt.ylabel("Loss")
+    plt.title("Training Loss")
+    plt.grid(True)
+    plt.legend()
 
     plt.tight_layout()
-    timestamp = time.strftime('%m%d_%H%M')
-    save_path = os.path.join("plots", f"{prefix}_training_curves_{timestamp}.png")
-    fig.savefig(save_path)
-    print(f"✅ 训练曲线已保存至: {save_path}")
-    plt.close(fig)
+    plt.savefig(save_path)
+    plt.close()
+    print(f"Training curves saved to: {save_path}")
